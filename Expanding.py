@@ -1,17 +1,20 @@
-from math import factorial
+def buildCluster(cluster, node, excluded):
+    cluster.append(node)
+    excluded.append(node)
+    for connection in connects_to[node]:
+        if connection not in excluded:
+            buildCluster(cluster,connection,excluded)
 
 line = input()
 line = line.split(' ')
 N = int(line[0])
 M = int(line[1])
-pairs = []
 connects_to = {}
 for i in range(M):
     line = input()
     line = line.split()
     inp = int(line[0])
     out = int(line[1])
-    pairs.append((inp,out))
     try:
         if out not in connects_to[inp]:
             connects_to[int(inp)].append(int(out))
@@ -25,29 +28,18 @@ for i in range(M):
         connects_to[int(out)] = []
         connects_to[int(out)].append(int(inp))
 
+clusters = []
+num_clusters = 0
+for node in connects_to:
+    included = False
+    for cluster in clusters:
+        if node in cluster:
+            included = True
+    if included == False:
+        cluster = []
+        excluded = []
+        buildCluster(cluster, node, excluded)
+        clusters.append(cluster)
+        num_clusters += 1
 
-max_pairs = 0
-for pair in pairs:
-    reachable_nodes = []
-    num_pairs = 0
-    inp = pair[0]
-    out = pair[1]
-    for element in pair:
-        reachable_nodes.append(element)
-    try:
-        for element in connects_to[inp]:
-            if element not in reachable_nodes:
-                reachable_nodes.append(element)
-    except KeyError:
-        pass
-    try:
-        for element in connects_to[out]:
-            if element not in reachable_nodes:
-                reachable_nodes.append(element)
-    except KeyError:
-        pass
-    n = len(reachable_nodes)
-    num_pairs = n * ((n-1) /2)
-    if num_pairs > max_pairs:
-        max_pairs = num_pairs
-print (int(max_pairs))
+print (num_clusters)
