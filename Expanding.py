@@ -1,45 +1,37 @@
-def buildCluster(cluster, node, excluded):
-    cluster.append(node)
-    excluded.append(node)
-    for connection in connects_to[node]:
-        if connection not in excluded:
-            buildCluster(cluster,connection,excluded)
+import itertools
+
+def testValid(combo,pairs):
+    combinations = list(itertools.combinations(combo,2))
+    for pair in combinations:
+        if pair in pairs:
+            return False
+    return True
 
 line = input()
 line = line.split(' ')
 N = int(line[0])
 M = int(line[1])
-connects_to = {}
+pairs = []
 for i in range(M):
     line = input()
     line = line.split()
     inp = int(line[0])
     out = int(line[1])
-    try:
-        if out not in connects_to[inp]:
-            connects_to[int(inp)].append(int(out))
-    except KeyError:
-        connects_to[int(inp)] = []
-        connects_to[int(inp)].append(int(out))
-    try:
-        if inp not in connects_to[int(out)]:
-            connects_to[int(out)].append(int(inp))
-    except KeyError:
-        connects_to[int(out)] = []
-        connects_to[int(out)].append(int(inp))
+    pairs.append((inp,out))
 
-clusters = []
-num_clusters = 0
-for node in connects_to:
-    included = False
-    for cluster in clusters:
-        if node in cluster:
-            included = True
-    if included == False:
-        cluster = []
-        excluded = []
-        buildCluster(cluster, node, excluded)
-        clusters.append(cluster)
-        num_clusters += 1
+max = 0
+original = [i for i in range(N)]
+found = False
+n = N
+if n > 100:
+    n = n - 20
+while found == False:
+    n -= 1
+    combinations = list(itertools.combinations(original,n))
+    for combo in combinations:
+        valid = testValid(combo,pairs)
+        if valid == True:
+            found = True
+            break
 
-print (num_clusters)
+print (n)
