@@ -21,17 +21,16 @@ for i in range(M):
 
 max = 0
 original = [i for i in range(N)]
-found = False
-n = N
-if n > 100:
-    n = n - 20
-while found == False:
-    n -= 1
+n = 1
+found = True
+while found == True:
+    found = False
+    n += 1
     combinations = list(itertools.combinations(original,n))
     for combo in combinations:
         valid = testValid(combo,pairs)
         if valid == True:
             found = True
-            break
+            max = n
 
-print (n)
+print (max)
